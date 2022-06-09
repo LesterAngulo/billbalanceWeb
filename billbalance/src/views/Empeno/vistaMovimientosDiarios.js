@@ -32,6 +32,7 @@ export const MovimientosDiarios = ({ roles }) => {
   const handleCloseAlert = () => setOpenAlert(false);
   const [date, setDate] = useState(null);
   const [Reload, setReload] = useState(0);
+  const [reloadForEdit, setReloadForEdit] = useState(0);
   const [values, setValues] = useState({});
   const [editableMovement, setEditableMovement] = useState(false);
   const [repeatedMovement, setRepeatedMovement] = useState(undefined);
@@ -56,28 +57,32 @@ export const MovimientosDiarios = ({ roles }) => {
   };
 
   useEffect(() => {
-    if (formattedDate !== null && casino !== undefined) {
+    if (
+      formattedDate !== null &&
+      casino !== undefined &&
+      formattedDate !== 'undefined-undefined-undefined'
+    ) {
       axios
         .get(
-          `https://billbalanceapif.azurewebsites.net/api/PawnShop/GetMovementsByDateRange`,
+          `https://billbalanceapif.azurewebsites.net/api/PawnShop/GetMovementsByBranchNameAndDate`,
           {
             params: {
-              start: formattedDate,
-              end: formattedDate,
+              date: formattedDate,
+              branch: casino,
             },
           },
         )
         .then(function (response) {
-          console.log(response.data[0]);
-          if (response.data.length !== 0) {
+          console.log(response);
+          if (response.status === 200) {
             setOpenAlert(true);
             setType('warning');
             setMessage('Día ocupado por movimiento');
             setEditableMovement(true);
-            setRepeatedMovement(response.data[0]);
-            setValues(response.data[0]);
+            setRepeatedMovement(response.data);
+            setValues(response.data);
             setState({ editable: false });
-          } else {
+          } else if (response.status === 204) {
             setValues({
               fecha: formattedDate,
               dia: parseInt(formattedDate.substring(7, 9)),
@@ -92,37 +97,15 @@ export const MovimientosDiarios = ({ roles }) => {
         .catch(function (error) {
           console.log(error);
         });
-      // getDataByDay(formattedDate, casino, 'Data').then((data) => {
-      //   if (data) {
-      //     setOpenAlert(true);
-      //     setType('warning');
-      //     setMessage('Día ocupado por movimiento');
-      //     setEditableMovement(true);
-      //     setRepeatedMovement(data);
-      //     setValues(data);
-      //     setState({ editable: false });
-      //   } else {
-      //     setValues({
-      //       fecha: formattedDate,
-      //       dia: parseInt(formattedDate.substring(7, 9)),
-      //       año: parseInt(formattedDate.substring(0, 4)),
-      //       mes: parseInt(formattedDate.split('-')[1]),
-      //       id: crypto.randomUUID(),
-      //     });
-      //     setState({ editable: true });
-      //     setEditableMovement(false);
-      //     setRepeatedMovement(undefined);
-      //   }
-      // });
     }
   }, [formattedDate]);
 
   const handleOperations = () => {
     if (editableMovement) {
       if (Object.entries(values).length !== 0) {
-        let gasto = parseInt(values.gasto);
-        let interes = parseInt(values.interes);
-        let utilVenta = parseInt(values.utilidadVenta);
+        let gasto = values.gasto;
+        let interes = values.interes;
+        let utilVenta = values.utilidadVenta;
         setValues({
           ...values,
           utilBruta: interes + utilVenta,
@@ -130,13 +113,13 @@ export const MovimientosDiarios = ({ roles }) => {
           total: interes + utilVenta,
           casino: casino,
         });
-        setReload((oldR) => oldR + 1);
+        setReloadForEdit((oldR) => oldR + 1);
       }
     } else {
       if (Object.entries(values).length !== 0) {
-        let gasto = parseInt(values.gasto);
-        let interes = parseInt(values.interes);
-        let utilVenta = parseInt(values.utilidadVenta);
+        let gasto = values.gasto;
+        let interes = values.interes;
+        let utilVenta = values.utilidadVenta;
         setValues({
           ...values,
           utilBruta: interes + utilVenta,
@@ -155,21 +138,18 @@ export const MovimientosDiarios = ({ roles }) => {
         .post(
           'https://billbalanceapif.azurewebsites.net/api/PawnShop/AddPawnShopMovement',
           {
-            costoVenta: values.costoVenta,
-            desempeño: values.desempeño,
-            dia: values.dia,
-            empeño: values.empeño,
+            costoVenta: parseInt(values.costoVenta),
+            desempeño: parseInt(values.desempeño),
+            dia: parseInt(values.dia),
+            empeño: parseInt(values.empeño),
             fecha: values.fecha,
-            gasto: values.gasto,
-            interes: values.interes,
-            inventario: values.inventario,
-            referendo: values.referendo,
-            total: values.total,
-            utilidadBruta: values.utilidadBruta,
-            utilidadNeta: values.utilidadNeta,
-            utilidadVenta: values.utilidadVenta,
-            sucursal: values.casino,
-            año: values.año,
+            gasto: parseInt(values.gasto),
+            interes: parseInt(values.interes),
+            inventario: parseInt(values.inventario),
+            referendo: parseInt(values.referendo),
+            utilidadVenta: parseInt(values.utilidadVenta),
+            sucursal: casino,
+            año: parseInt(values.año),
           },
         )
         .then(function (response) {
@@ -178,32 +158,66 @@ export const MovimientosDiarios = ({ roles }) => {
             setMessage(' dada de alta correctamente');
             setType('success');
             setReload((oldR) => oldR + 1);
-            setValues({ name: '' });
+            setValues({});
+            handleReset();
           }
           if (response.status === 400) {
             setMessage('error al realizar alta');
             setType('error');
             setReload((oldR) => oldR + 1);
-            setValues({ name: '' });
+            setValues({});
+            handleReset();
           }
         })
         .catch(function (error) {
           console.log(error);
         });
-      // addData(values, formattedDate, 'Data');
-      // addIndicators(values, date);
-      // setOpenAlert(true);
-      // setType('success');
-      // if (editableMovement) {
-      //   setMessage('Día editado correctamente');
-      // } else {
-      //   setMessage('Día dado de alta correctamente');
-      // }
-      // handleReset();
     } else {
-      // setOpenAlert(true);
-      // setType('error');
-      // setMessage('Error al dar de alta el día');
+    }
+  };
+
+  const handleEdit = () => {
+    if (Object.entries(values).length > 3 && date !== null) {
+      axios
+        .post(
+          'https://billbalanceapif.azurewebsites.net/api/PawnShop/EditPawnShopMovement',
+          {
+            id: parseInt(values.id),
+            costoVenta: parseInt(values.costoVenta),
+            desempeño: parseInt(values.desempeño),
+            dia: parseInt(values.dia),
+            empeño: parseInt(values.empeño),
+            fecha: values.fecha,
+            gasto: parseInt(values.gasto),
+            interes: parseInt(values.interes),
+            inventario: parseInt(values.inventario),
+            referendo: parseInt(values.referendo),
+            utilidadVenta: parseInt(values.utilidadVenta),
+            sucursal: casino,
+            año: parseInt(values.año),
+          },
+        )
+        .then(function (response) {
+          console.log(response);
+          if (response.status === 200) {
+            setMessage('Día editado correctamente');
+            setType('success');
+            setReload((oldR) => oldR + 1);
+            setValues({});
+            handleReset();
+          }
+          if (response.status === 400) {
+            setMessage('error al realizar edición');
+            setType('error');
+            setReload((oldR) => oldR + 1);
+            setValues({});
+            handleReset();
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
     }
   };
 
@@ -212,6 +226,12 @@ export const MovimientosDiarios = ({ roles }) => {
       handleSubmit();
     }
   }, [Reload]);
+
+  useEffect(() => {
+    if (Object.entries(values).length !== 0) {
+      handleEdit();
+    }
+  }, [reloadForEdit]);
 
   useEffect(() => {
     axios
@@ -388,8 +408,8 @@ export const MovimientosDiarios = ({ roles }) => {
                           width={6 / 10}
                           label='Refrendo'
                           values={values}
-                          onChange={handleChange('refrendo')}
-                          type={'refrendo'}
+                          onChange={handleChange('referendo')}
+                          type={'referendo'}
                           placeHolder='0'
                           tipo='number'
                         />

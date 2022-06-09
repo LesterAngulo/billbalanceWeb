@@ -218,361 +218,253 @@ export const Indicadores = ({ roles }) => {
 
   useEffect(() => {
     if (casino !== undefined) {
-      // getIndicators1(fMonth, fYear, casino.name).then((payload) => {
-      //   setData1(payload);
-      // });
-    }
-  }, [casino, fMonth, fYear, formattedDate1]);
-  useEffect(() => {
-    if (casino !== undefined) {
       if (formattedDate2 !== null) {
-        console.log(sMonth, sYear);
-        // getIndicators2(sMonth, sYear, casino.name).then((payload) => {
-        //   setData2(payload);
-        // });
+        axios
+          .get(
+            `https://billbalanceapif.azurewebsites.net/api/PawnShop/GetPawnShopMonthReport`,
+            {
+              params: {
+                year1: fYear,
+                month1: fMonth,
+                year2: sYear,
+                month2: sMonth,
+                branch: casino.name,
+              },
+            },
+          )
+          .then(function (response) {
+            // console.log(response.data[0]);
+            let totalindicadorresultado =
+              parseFloat(response.data[0].interes) +
+              parseFloat(response.data[0].utilidadVenta);
+            let utiliadNetaResultados =
+              parseFloat(response.data[0].interes) +
+              parseFloat(response.data[0].utilidadVenta) -
+              parseFloat(response.data[0].gasto);
+            let rentabilidadResultados =
+              parseFloat(response.data[1].utilidadNeta) /
+              parseFloat(response.data[0].inventario);
+
+            let refrendoIdentificadores =
+              response.data[1].referendo / response.data[0].inventario;
+            let indicadores = [
+              {
+                identificador: months[mes1 - 1],
+                inventario: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].inventario),
+                empeño: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].empeño),
+                refrendo: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].referendo),
+                desempeño: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].desempeño),
+                venta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].costoVenta),
+                intereses: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].interes),
+                utilventa: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].utilidadVenta),
+                total: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].total),
+                gastos: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].gasto),
+                utilneta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].utilidadNeta),
+                rentabilidad: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].utilidadBruta),
+              },
+
+              {
+                identificador: months[mes2 - 1],
+                inventario: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].inventario),
+                empeño: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].empeño),
+                refrendo: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].referendo),
+                desempeño: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].desempeño),
+                venta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].costoVenta),
+                intereses: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].interes),
+                utilventa: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].utilidadVenta),
+                total: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].total),
+                gastos: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].gasto),
+                utilneta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].utilidadNeta),
+                rentabilidad: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[1].utilidadBruta),
+              },
+              {
+                identificador: 'Totales',
+                inventario: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(
+                  parseInt(response.data[1].inventario) -
+                    parseInt(response.data[1].inventario),
+                ),
+                empeño: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(
+                  parseInt(response.data[1].empeño) -
+                    parseInt(response.data[0].empeño),
+                ),
+                refrendo: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(refrendoIdentificadores),
+
+                desempeño: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(
+                  response.data[1].desempeño / response.data[0].inventario,
+                ),
+                venta: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(
+                  parseInt(response.data[0].costoVenta) /
+                    parseInt(response.data[1].inventario),
+                ),
+                intereses: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(
+                  parseInt(response.data[0].interes) /
+                    parseInt(response.data[1].inventario),
+                ),
+                utilventa: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(
+                  parseInt(response.data[1].utilidadVenta) /
+                    parseInt(response.data[0].costoVenta),
+                ),
+                total: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(
+                  parseFloat(response.data[1].total) -
+                    parseFloat(response.data[0].total),
+                ),
+                // parseFloat(data2[0].total) - parseFloat(data1[0].total),
+                gastos: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(
+                  parseFloat(response.data[1].gasto) -
+                    parseFloat(response.data[0].gasto),
+                ),
+                utilneta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(
+                  parseFloat(response.data[0].utilidadNeta) -
+                    parseFloat(response.data[1].utilidadNeta),
+                ),
+                rentabilidad: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(
+                  parseFloat(response.data[1].utilidadNeta) /
+                    parseFloat(response.data[0].inventario),
+                ),
+              },
+            ];
+            let resultados = [
+              {
+                interes: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].interes),
+                utilidadVenta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].utilidadVenta),
+                total: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(totalindicadorresultado),
+                gastos: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(response.data[0].gasto),
+                utilidadNeta: new Intl.NumberFormat('es-MX', {
+                  style: 'currency',
+                  currency: 'MXN',
+                }).format(utiliadNetaResultados),
+
+                rentabilidad: new Intl.NumberFormat('es-MX', {
+                  style: 'percent',
+                  minimumFractionDigits: 2,
+                }).format(rentabilidadResultados),
+              },
+            ];
+            console.log(indicadores);
+            console.log(resultados);
+            setIndicadores(indicadores);
+            setResultados(resultados);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       }
     }
-  }, [casino, formattedDate2, sMonth, sYear]);
+  }, [casino, fMonth, fYear, formattedDate1, formattedDate2, sMonth, sYear]);
 
   let mes1 = parseInt(formattedDate1.split('-')[1]);
   let mes2 = parseInt(formattedDate2.split('-')[1]);
-
-  const [totalesData1, setTotalesData1] = useState();
-  const [totalesData2, setTotalesData2] = useState();
-  useEffect(() => {
-    if (data2 !== undefined && data2.length > 0) {
-      let obj;
-      let arr = [];
-      let inv = 0,
-        tot = 0,
-        des = 0,
-        emp = 0,
-        ref = 0,
-        rem = 0,
-        int = 0,
-        pcv = 0,
-        uv = 0,
-        ub = 0,
-        gas = 0,
-        un = 0;
-      data2.forEach(function (a) {
-        if (a.fecha === formattedDate2) inv = parseInt(a.inventario);
-        emp += parseInt(a.empeño);
-        ref += parseInt(a.refrendo);
-        des += parseInt(a.desempeño);
-        // rem += parseInt(a.remate);
-        int += parseInt(a.interes);
-        pcv += parseInt(a.costoVenta);
-        uv += parseInt(a.utilidadVenta);
-        ub += a.utilBruta;
-        gas += parseInt(a.gasto);
-        un += parseInt(a.utilNeta);
-        tot += parseInt(a.total);
-      });
-      obj = {
-        inventario: inv,
-        empeño: emp,
-        refrendo: ref,
-        desempeño: des,
-        interes: int,
-        costoVenta: pcv,
-        total: tot,
-        utilidadVenta: uv,
-        utilidadBruta: ub,
-        gasto: gas,
-        utilidadNeta: un,
-      };
-      arr.push(obj);
-      setTotalesData2(arr);
-    }
-  }, [data2, formattedDate2]);
-  useEffect(() => {
-    if (data1 !== undefined && data1.length > 0) {
-      let obj;
-      let arr = [];
-      let inv = 0,
-        des = 0,
-        emp = 0,
-        ref = 0,
-        rem = 0,
-        tot = 0,
-        int = 0,
-        pcv = 0,
-        uv = 0,
-        ub = 0,
-        gas = 0,
-        un = 0;
-      data1.forEach(function (a) {
-        if (a.fecha === formattedDate1) inv = parseInt(a.inventario);
-        emp += parseInt(a.empeño);
-        ref += parseInt(a.refrendo);
-        des += parseInt(a.desempeño);
-        // rem += parseInt(a.remate);
-        int += parseInt(a.interes);
-        pcv += parseInt(a.costoVenta);
-        uv += parseInt(a.utilidadVenta);
-        ub += a.utilBruta;
-        gas += parseInt(a.gasto);
-        tot += parseInt(a.total);
-        un += parseInt(a.utilNeta);
-      });
-      obj = {
-        inventario: inv,
-        empeño: emp,
-        refrendo: ref,
-        desempeño: des,
-        interes: int,
-        costoVenta: pcv,
-        utilidadVenta: uv,
-        utilidadBruta: ub,
-        gasto: gas,
-        total: tot,
-        utilidadNeta: un,
-      };
-      arr.push(obj);
-      setTotalesData1(arr);
-    }
-  }, [data1, formattedDate1]);
-
-  useEffect(() => {
-    console.log(totalesData1);
-    console.log(totalesData2);
-    if (
-      casino !== undefined &&
-      totalesData1 !== undefined &&
-      totalesData2 !== undefined
-    ) {
-      if (totalesData1.length > 0 && totalesData2.length > 0) {
-        if (totalesData1 !== undefined && totalesData2 !== undefined) {
-          let totalindicadorresultado =
-            parseFloat(totalesData1[0].interes) +
-            parseFloat(totalesData1[0].utilidadVenta);
-          let utiliadNetaResultados =
-            parseFloat(totalesData1[0].interes) +
-            parseFloat(totalesData1[0].utilidadVenta) -
-            parseFloat(totalesData1[0].gasto);
-          let rentabilidadResultados =
-            parseFloat(totalesData2[0].utilidadNeta) /
-            parseFloat(totalesData1[0].inventario);
-
-          let refrendoIdentificadores =
-            parseInt(totalesData2[0].refrendo) /
-            parseInt(totalesData1[0].inventario);
-
-          let indicadores = [
-            {
-              identificador: months[mes1 - 1],
-              inventario: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].inventario),
-              empeño: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].empeño),
-              refrendo: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].refrendo),
-              desempeño: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].desempeño),
-              venta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].costoVenta),
-              intereses: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].interes),
-              utilventa: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].utilidadVenta),
-              total: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].total),
-              gastos: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].gasto),
-              utilneta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].utilidadNeta),
-              rentabilidad: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].utilidadBruta),
-            },
-
-            {
-              identificador: months[mes2 - 1],
-              inventario: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].inventario),
-              empeño: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].empeño),
-              refrendo: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].refrendo),
-              desempeño: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].desempeño),
-              venta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].costoVenta),
-              intereses: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].interes),
-              utilventa: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].utilidadVenta),
-              total: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].total),
-              gastos: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].gasto),
-              utilneta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].utilidadNeta),
-              rentabilidad: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData2[0].utilidadBruta),
-            },
-            {
-              identificador: 'Totales',
-              inventario: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(
-                parseInt(totalesData2[0].inventario) -
-                  parseInt(totalesData1[0].inventario),
-              ),
-              empeño: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(
-                parseInt(totalesData2[0].empeño) -
-                  parseInt(totalesData1[0].empeño),
-              ),
-              refrendo: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(refrendoIdentificadores),
-
-              desempeño: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(
-                parseInt(totalesData2[0].desempeño) /
-                  parseInt(totalesData1[0].inventario),
-              ),
-              venta: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(
-                parseInt(totalesData1[0].costoVenta) /
-                  parseInt(totalesData2[0].inventario),
-              ),
-              intereses: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(
-                parseInt(totalesData1[0].interes) /
-                  parseInt(totalesData2[0].inventario),
-              ),
-              utilventa: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(
-                parseInt(totalesData2[0].utilidadVenta) /
-                  parseInt(totalesData2[0].costoVenta),
-              ),
-              total: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(
-                parseFloat(totalesData2[0].total) -
-                  parseFloat(totalesData1[0].total),
-              ),
-              // parseFloat(data2[0].total) - parseFloat(data1[0].total),
-              gastos: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(
-                parseFloat(totalesData2[0].gasto) -
-                  parseFloat(totalesData1[0].gasto),
-              ),
-              utilneta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(
-                parseFloat(totalesData1[0].utilidadNeta) -
-                  parseFloat(totalesData2[0].utilidadNeta),
-              ),
-              rentabilidad: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(
-                parseFloat(totalesData2[0].utilidadNeta) /
-                  parseFloat(totalesData1[0].inventario),
-              ),
-            },
-          ];
-          let resultados = [
-            {
-              interes: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].interes),
-              utilidadVenta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].utilidadVenta),
-              total: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalindicadorresultado),
-              gastos: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(totalesData1[0].gasto),
-              utilidadNeta: new Intl.NumberFormat('es-MX', {
-                style: 'currency',
-                currency: 'MXN',
-              }).format(utiliadNetaResultados),
-
-              rentabilidad: new Intl.NumberFormat('es-MX', {
-                style: 'percent',
-                minimumFractionDigits: 2,
-              }).format(rentabilidadResultados),
-            },
-          ];
-          setIndicadores(indicadores);
-          setResultados(resultados);
-        }
-      } else {
-        setIndicadores();
-        setResultados();
-      }
-    }
-  }, [casino, totalesData1, totalesData2]);
 
   return (
     <div>

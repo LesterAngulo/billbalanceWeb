@@ -45,7 +45,7 @@ export const VistaTablaMovimientosDiarios = ({ roles }) => {
     if (casino !== undefined) {
       axios
         .get(
-          'https://billbalanceapif.azurewebsites.net/api/PawnShop/GetMovementsByBranchName',
+          'https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetAllMovementsByBranchName',
           {
             params: {
               branch: casino.name,
@@ -53,78 +53,42 @@ export const VistaTablaMovimientosDiarios = ({ roles }) => {
           },
         )
         .then(function (response) {
+          console.log('response', response);
           let data = response.data.map((item) => {
-            console.log(item);
-            // let percent = item.participacion / 100;
-            // return {
-            //   casino: item.casino,
-            //   modelo: item.modelo,
-            //   numero: item.numero,
-            //   coinIn: new Intl.NumberFormat('es-MX', {
-            //     style: 'currency',
-            //     currency: 'MXN',
-            //   }).format(item.coinIn),
-            //   coinOut: new Intl.NumberFormat('es-MX', {
-            //     style: 'currency',
-            //     currency: 'MXN',
-            //   }).format(item.coinOut),
-            //   netWin: new Intl.NumberFormat('es-MX', {
-            //     style: 'currency',
-            //     currency: 'MXN',
-            //   }).format(item.netwin),
-            //   fechaInicial: item.fechaInicial,
-            //   fechaFinal: item.fechaFinal,
-            //   participacion: new Intl.NumberFormat('es-MX', {
-            //     style: 'percent',
-            //     minimumFractionDigits: 2,
-            //   }).format(percent),
-            //   id: item.id,
-            // };
+            let percent = item.participacion / 100;
+            return {
+              modelo: item.modelo,
+              numero: item.numero,
+              coinIn: new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+              }).format(item.coinIn),
+              coinOut: new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+              }).format(item.coinOut),
+              netWin: new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+              }).format(item.netwin),
+              fechaInicial: item.fechaInicial,
+              fechaFinal: item.fechaFinal,
+              participacion: new Intl.NumberFormat('es-MX', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+              }).format(percent),
+              id: item.id,
+            };
           });
           setInvoices(data);
         })
         .catch(function (error) {
           console.log(error);
         });
-      // getMachinesDataWithOutModel(casino.name, 'MachinesData').then((data) => {
-      //   data = data.map((item) => {
-      //     let percent = item.participacion / 100;
-      //     return {
-      //       casino: item.casino,
-      //       modelo: item.modelo,
-      //       numero: item.numero,
-      //       coinIn: new Intl.NumberFormat('es-MX', {
-      //         style: 'currency',
-      //         currency: 'MXN',
-      //       }).format(item.coinIn),
-      //       coinOut: new Intl.NumberFormat('es-MX', {
-      //         style: 'currency',
-      //         currency: 'MXN',
-      //       }).format(item.coinOut),
-      //       netWin: new Intl.NumberFormat('es-MX', {
-      //         style: 'currency',
-      //         currency: 'MXN',
-      //       }).format(item.netwin),
-      //       fechaInicial: item.fechaInicial,
-      //       fechaFinal: item.fechaFinal,
-      //       participacion: new Intl.NumberFormat('es-MX', {
-      //         style: 'percent',
-      //         minimumFractionDigits: 2,
-      //       }).format(percent),
-      //       id: item.id,
-      //     };
-      //   });
-      //   setInvoices(data);
-      // });
     }
   }, [casino]);
 
   const columnsForDataGrid = [
-    {
-      field: 'casino',
-      headerName: 'Casino',
-      width: 140,
-    },
     {
       field: 'modelo',
       headerName: 'Modelo',
@@ -213,14 +177,17 @@ export const VistaTablaMovimientosDiarios = ({ roles }) => {
                 <Grid
                   item
                   xs={12}
-                  sx={{ display: 'flex', justifyContent: 'center' }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    height: 500,
+                  }}
                 >
                   <DataGrid
                     sx={{
                       '@media print': {
                         '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' },
                       },
-                      width: 900,
                     }}
                     columns={columnsForDataGrid}
                     rows={invoices}
@@ -228,7 +195,7 @@ export const VistaTablaMovimientosDiarios = ({ roles }) => {
                     components={{
                       Toolbar: CustomToolbar,
                     }}
-                    autoHeight
+                    // autoHeight
                   />
                 </Grid>
               )}

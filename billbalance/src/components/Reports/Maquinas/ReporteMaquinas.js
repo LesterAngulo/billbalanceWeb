@@ -183,7 +183,7 @@ export const ReporteMaquinas = ({
             diffDays;
           axios
             .get(
-              `https://billbalanceapi.azurewebsites.net/api/SlotMachine/GetMachineMovementByDateRange?start=${year.getFullYear()}-01-01&end=${year.getFullYear()}-12-31`,
+              `https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetMachineMovementByDateRange?start=${year.getFullYear()}-01-01&end=${year.getFullYear()}-12-31`,
             )
             .then(function (response) {
               console.log(response);

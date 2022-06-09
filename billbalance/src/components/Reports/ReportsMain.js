@@ -119,7 +119,7 @@ export const ReportsMain = ({ Report = '', ButtonTitle = undefined }) => {
 
   useEffect(() => {
     axios
-      .get('https://billbalanceapi.azurewebsites.net/api/Branch/GetBranches', {
+      .get('https://billbalanceapif.azurewebsites.net/api/Branch/GetBranches', {
         params: {
           type: 'Empeño',
         },
@@ -139,7 +139,7 @@ export const ReportsMain = ({ Report = '', ButtonTitle = undefined }) => {
   }, []);
   useEffect(() => {
     axios
-      .get('https://billbalanceapi.azurewebsites.net/api/Branch/GetBranches', {
+      .get('https://billbalanceapif.azurewebsites.net/api/Branch/GetBranches', {
         params: {
           type: 'Casino',
         },
@@ -160,7 +160,7 @@ export const ReportsMain = ({ Report = '', ButtonTitle = undefined }) => {
 
   useEffect(() => {
     axios
-      .get('https://billbalanceapi.azurewebsites.net/api/Branch/GetBranches', {
+      .get('https://billbalanceapif.azurewebsites.net/api/Branch/GetBranches', {
         params: {
           type: 'Sucursal',
         },
@@ -183,7 +183,7 @@ export const ReportsMain = ({ Report = '', ButtonTitle = undefined }) => {
     if (casino !== undefined) {
       axios
         .get(
-          'https://billbalanceapi.azurewebsites.net/api/SlotMachine/GetSlotMachinesByCasino?',
+          'https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetSlotMachinesByCasino?',
           {
             params: {
               casino: casino.name,

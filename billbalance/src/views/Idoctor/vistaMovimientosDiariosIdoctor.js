@@ -128,10 +128,6 @@ export const MovimientosDiariosIdoctor = ({ roles }) => {
       .catch(function (error) {
         console.log(error);
       });
-
-    // getSalas().then((payload) => {
-    //   setSalas(payload);
-    // });
   }, []);
   const handleSelect = (e) => {
     setCasino(e.target.value);

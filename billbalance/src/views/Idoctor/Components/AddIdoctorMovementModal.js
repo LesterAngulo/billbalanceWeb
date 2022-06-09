@@ -67,7 +67,11 @@ export const AddIdoctorMovementModal = ({ open, closeAction }) => {
   };
 
   useEffect(() => {
-    if (formattedDate !== null && casino !== undefined) {
+    if (
+      formattedDate !== null &&
+      casino !== undefined &&
+      formattedDate !== 'undefined-undefined-undefined'
+    ) {
       axios
         .get(
           `https://billbalanceapif.azurewebsites.net/api/Idoctor/GetMovementsByDateRange`,
@@ -79,7 +83,7 @@ export const AddIdoctorMovementModal = ({ open, closeAction }) => {
           },
         )
         .then(function (response) {
-          console.log(response.data[0]);
+          console.log(response);
           if (response.data.length !== 0) {
             setOpenAlert(true);
             setType('warning');
@@ -139,21 +143,58 @@ export const AddIdoctorMovementModal = ({ open, closeAction }) => {
 
   const handleSubmit = () => {
     if (Object.entries(values).length !== 0) {
+      console.log(values);
       // https://billbalanceapif.azurewebsites.net/api/Idoctor/AddIdoctorMovement
-
+      axios
+        .post(
+          'https://billbalanceapif.azurewebsites.net/api/Idoctor/AddIdoctorMovement',
+          {
+            año: parseInt(values.año),
+            casino: values.casino,
+            descripcionEgreso: values.descripcionEgreso,
+            descripcionIngreso: values.descripcionIngreso,
+            dia: parseInt(values.dia),
+            egreso: parseInt(values.egreso),
+            ingreso: parseInt(values.ingreso),
+            fecha: values.fecha,
+            mes: parseInt(values.mes),
+            tipo: values.tipo,
+          },
+        )
+        .then(function (response) {
+          console.log(response);
+          // if (response.status === 200) {
+          //   setMessage(' dada de alta correctamente');
+          //   setType('success');
+          //   setReload((oldR) => oldR + 1);
+          //   setValues({});
+          //   handleReset();
+          // }
+          // if (response.status === 400) {
+          //   setMessage('error al realizar alta');
+          //   setType('error');
+          //   setReload((oldR) => oldR + 1);
+          //   setValues({});
+          //   handleReset();
+          // }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       // addData(values, formattedDate, 'DataIDoctor');
-      setOpenAlert(true);
-      setType('success');
-      if (editableMovement) {
-        setMessage('Día editado correctamente');
-      } else {
-        setMessage('Día dado de alta correctamente');
-      }
-      handleReset();
-    } else {
-      setOpenAlert(true);
-      setType('error');
-      setMessage('Error al dar de alta el día');
+      // setOpenAlert(true);
+      // setType('success');
+      // if (editableMovement) {
+      //   setMessage('Día editado correctamente');
+      // } else {
+      //   setMessage('Día dado de alta correctamente');
+      // }
+      // handleReset();
+      // } else {
+      //   setOpenAlert(true);
+      //   setType('error');
+      //   setMessage('Error al dar de alta el día');
+      // }
     }
   };
 

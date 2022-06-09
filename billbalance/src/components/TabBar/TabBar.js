@@ -8,7 +8,6 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
-import ReceiptIcon from '@mui/icons-material/Receipt';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import StoreIcon from '@mui/icons-material/Store';
 import SummarizeIcon from '@mui/icons-material/Summarize';
@@ -37,6 +36,7 @@ import { Helmet } from 'react-helmet';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Casinos } from '../../views/Casinos/vistaCasinos';
 import { MovimientosIdoctor } from '../../views/Casinos/vistaIdoctor';
+import { Maquinas } from '../../views/Casinos/vistaMaquinas';
 import { Empeno } from '../../views/Empeno/vistaEmpeño';
 import { Indicadores } from '../../views/Empeno/vistaIndicadores';
 import { MovimientosDiarios } from '../../views/Empeno/vistaMovimientosDiarios';
@@ -446,27 +446,6 @@ export const TabBar = () => {
                       primary={<Typography>Alta Maquinas</Typography>}
                     />
                   </ListItemButton>
-                  {/* facturacion */}
-                  <ListItemButton
-                    selected={selectedIndex === 6}
-                    onClick={(event) => {
-                      handleListItemClick(event, 6);
-                      navigate('facturacion');
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{ flexDirection: 'row-reverse', pr: '18px' }}
-                    >
-                      <ReceiptIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row-reverse',
-                      }}
-                      primary={<Typography>Facturas</Typography>}
-                    />
-                  </ListItemButton>
                 </Collapse>
                 <Divider />
 
@@ -596,7 +575,7 @@ export const TabBar = () => {
               path='/movimientosidoctor'
               element={<MovimientosIdoctor roles={roles} />}
             />
-            {/* <Route path='/maquinas' element={<Maquinas roles={roles} />} /> */}
+            <Route path='/maquinas' element={<Maquinas roles={roles} />} />
             <Route
               path='/altaMaquinas'
               element={<AltaMaquinas roles={roles} />}
@@ -605,11 +584,6 @@ export const TabBar = () => {
               path='/tablamaquinas'
               element={<VistaTablaMovimientosDiarios roles={roles} />}
             />
-
-            {/* <Route
-              path='/facturacion'
-              element={<Facturacion roles={roles} />}
-            /> */}
             <Route path='/reportes' element={<Reportes />} />
           </Routes>
         </Main>

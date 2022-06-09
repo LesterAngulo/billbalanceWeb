@@ -18,7 +18,6 @@ export default function InputAdornmentComponent(props) {
     disabled = false,
     normal = true,
   } = props;
-
   return (
     <FormControl required={required} sx={{ width: width }}>
       <InputLabel>{label}</InputLabel>

@@ -24,6 +24,7 @@ export const MovimientosIdoctor = ({ roles }) => {
   if (roles !== 'superadmin' && roles !== 'soporte') {
     return <Navigate to='/inicio' />;
   }
+  const axios = require('axios');
   const [openInvoiceModal, setOpenInvoiceModal] = useState(false);
   const [month, setMonth] = useState(null);
   const [invoices, setInvoices] = useState(undefined);
@@ -89,26 +90,41 @@ export const MovimientosIdoctor = ({ roles }) => {
     let mes1 = parseInt(formattedDate1.split('-')[1]);
     let año = parseInt(formattedDate1.split('-')[0]);
     setInvoices(undefined);
-    // getDataIDoctor(mes1, año).then((data) => {
-    //   data = data.map((item) => {
-    //     return {
-    //       fecha: item.fecha,
-    //       casino: item.casino,
-    //       ingreso: new Intl.NumberFormat('es-MX', {
-    //         style: 'currency',
-    //         currency: 'MXN',
-    //       }).format(item.ingreso),
-    //       descripcionIngreso: item.descripcionIngreso,
-    //       egreso: new Intl.NumberFormat('es-MX', {
-    //         style: 'currency',
-    //         currency: 'MXN',
-    //       }).format(item.egreso),
-    //       descripcionEgreso: item.descripcionEgreso,
-    //     };
-    //   });
-
-    //   setInvoices(data);
-    // });
+    if (!isNaN(mes1) && !isNaN(año)) {
+      axios
+        .get(
+          `https://billbalanceapif.azurewebsites.net/api/Idoctor/GetMovementsByYearAndMonth`,
+          {
+            params: {
+              year: año,
+              month: mes1,
+            },
+          },
+        )
+        .then(function (response) {
+          console.log(response);
+          let data = response.data.map((item) => {
+            return {
+              fecha: item.fecha,
+              casino: item.casino,
+              ingreso: new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+              }).format(item.ingreso),
+              descripcionIngreso: item.descripcionIngreso,
+              egreso: new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+              }).format(item.egreso),
+              descripcionEgreso: item.descripcionEgreso,
+            };
+          });
+          setInvoices(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }, [formattedDate1]);
 
   return (

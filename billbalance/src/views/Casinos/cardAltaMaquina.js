@@ -50,21 +50,39 @@ export const CardAltaMaquina = ({
     setFechaFinal(null);
   };
   useEffect(() => {
-    if (fechaInicial !== undefined && fechaFinal !== undefined) {
+    if (
+      fechaInicial !== undefined &&
+      fechaFinal !== undefined &&
+      fechaInicial !== 'undefined-undefined-undefined' &&
+      fechaFinal !== 'undefined-undefined-undefined'
+    ) {
       axios
         .get(
-          `https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetMachineMovementByDateRange`,
+          `https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetMovementByDateAndCasino`,
           {
             params: {
+              casino: casino.name,
+              model: modelo.name,
               start: fechaInicial,
               end: fechaFinal,
             },
           },
         )
         .then(function (response) {
-          console.log(response);
-
-          // setPayload2(data);
+          console.log('asd', response);
+          if (response.status === 202) {
+            setOpenAlert(true);
+            setType('warning');
+            setMessage('Semana ya capturada');
+            setEditableMovement(true);
+            setRepeatedMovement(response.data);
+            setValue(response.data);
+            setState({ editable: false });
+          } else if (response.status === 204) {
+            setState({ editable: true });
+            setEditableMovement(false);
+            setRepeatedMovement(undefined);
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -92,12 +110,6 @@ export const CardAltaMaquina = ({
   };
 
   const handleCloseAlert = () => setOpenAlert(false);
-
-  // useEffect(() => {
-  //   getSalas().then((payload) => {
-  //     setSalas(payload);
-  //   });
-  // }, []);
 
   useEffect(() => {
     axios
@@ -133,10 +145,9 @@ export const CardAltaMaquina = ({
         dia: parseInt(fechaFinal.substring(7, 9)),
         mes: mes1,
         year: fechaFinal.substring(0, 4),
-        numero: modelo.numero,
+        numero: parseInt(modelo.numero),
         retorno: (value.netwin * 100) / value.coinIn,
-        participacion: modelo.participacion,
-        id: crypto.randomUUID(),
+        participacion: parseInt(modelo.participacion),
       });
       setReload((oldR) => oldR + 1);
     }
@@ -153,16 +164,41 @@ export const CardAltaMaquina = ({
       fechaInicial !== undefined &&
       fechaInicial !== undefined
     ) {
-      //addMachinesData(value);
-      setOpenAlert(true);
-      setType('success');
-      setMessage('Día dado de alta correctamente');
-      handleReset();
-    } else {
-      setOpenAlert(true);
-      setType('error');
-      setMessage('Error al dar de alta el día');
-      handleReset();
+      console.log(value);
+      axios
+        .post(
+          'https://billbalanceapif.azurewebsites.net/api/SlotMachine/AddMachineMovement',
+          {
+            coinIn: parseInt(value.coinIn),
+            coinOut: parseInt(value.coinOut),
+            dia: parseInt(value.dia),
+            fechaFinal: value.fechaFinal,
+            fechaInicial: value.fechaInicial,
+            netwin: parseInt(value.netwin),
+            participacion: parseInt(value.participacion),
+            retorno: parseInt(value.retorno),
+            modelo: value.modelo,
+            casino: value.casino,
+            numero: parseInt(value.numero),
+          },
+        )
+        .then(function (response) {
+          if (response.status === 200) {
+            setOpenAlert(true);
+            setType('success');
+            setMessage('Día dado de alta correctamente');
+            handleReset();
+          }
+          if (response.status === 400) {
+            setOpenAlert(true);
+            setType('error');
+            setMessage('Error al dar de alta el día');
+            handleReset();
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   };
 
@@ -195,7 +231,7 @@ export const CardAltaMaquina = ({
                           width={200}
                           disabled={true}
                           label='No. Máquinas'
-                          name='nomaquinas'
+                          name='numero'
                           required
                           value={modelo.numero}
                           variant='outlined'

@@ -4,7 +4,7 @@ import { Card, CardContent, Container, Grid, Typography } from '@mui/material';
 import {
   DataGrid,
   GridToolbarContainer,
-  GridToolbarExport,
+  GridToolbarExport
 } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
@@ -237,7 +237,6 @@ export const VistaTablaMovimientosDiariosEmpeno = ({ roles }) => {
                           color: 'rgba(0, 0, 0, 0.87)',
                         },
                       },
-                      // hei
                     }}
                     columns={columnsForDataGrid}
                     rows={invoices}

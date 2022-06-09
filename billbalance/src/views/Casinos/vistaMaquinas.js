@@ -12,12 +12,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { Navigate } from 'react-router-dom';
+import { useDatePicker } from '../../components/hooks/useDatePicker';
 import { SelectComponent } from '../../components/Select/SelectComponent';
-import {
-  getMachines,
-  getSalas,
-} from '../../configuration/firebase/Methods/Methods';
-import { useDatePicker } from '../../hooks/useDatePicker';
 import { AddInvoiceModal } from '../Maquinas/AddInvoiceModal';
 import { AddTerminalModelModal } from '../Maquinas/AddTerminalModelModal';
 import { EditTerminalModelModal } from '../Maquinas/EditTerminalModelModal';
@@ -109,17 +105,27 @@ export const Maquinas = ({ roles }) => {
   useEffect(() => {
     if (casino !== undefined) {
       axios
-      .get('https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetModelsByCasino', {
-        params: {
-          casino: casino.name,
-        },
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+        .get(
+          'https://billbalanceapif.azurewebsites.net/api/SlotMachine/GetSlotMachinesByCasino',
+          {
+            params: {
+              casino: casino.name,
+            },
+          },
+        )
+        .then(function (response) {
+          let data = response.data.map((items) => {
+            return {
+              model: items.model,
+              numero: items.numero,
+              participacion: items.porcentajeParticipacion,
+            };
+          });
+          setModels(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   }, [casino]);
 
@@ -129,6 +135,7 @@ export const Maquinas = ({ roles }) => {
   const handleSelectModelo = (e) => {
     setModelo(e.target.value);
   };
+  console.log(models);
   return (
     <div>
       <Helmet>
