@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/billbalanceWeb/static/css/main.e6c13ad2.css",
-    "main.js": "/billbalanceWeb/static/js/main.20bf36e1.js",
+    "main.js": "/billbalanceWeb/static/js/main.ff23c108.js",
     "index.html": "/billbalanceWeb/index.html",
     "main.e6c13ad2.css.map": "/billbalanceWeb/static/css/main.e6c13ad2.css.map",
-    "main.20bf36e1.js.map": "/billbalanceWeb/static/js/main.20bf36e1.js.map"
+    "main.ff23c108.js.map": "/billbalanceWeb/static/js/main.ff23c108.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.20bf36e1.js"
+    "static/js/main.ff23c108.js"
   ]
 }
